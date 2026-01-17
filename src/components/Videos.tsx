@@ -366,7 +366,6 @@ export default function Videos({ selectedVideoId, setSelectedVideoId, indexId, s
                     <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
                       {video.hls?.status === "COMPLETE" && video.hls?.video_url ? (
                         <video
-                          controls
                           poster={video.hls.thumbnail_urls?.[0]}
                           className="w-full h-full"
                         >
@@ -431,24 +430,34 @@ export default function Videos({ selectedVideoId, setSelectedVideoId, indexId, s
         </Card>
       )}
 
-      {/* Animated Policeman */}
+      {/* Animated Chase Scene */}
       <div
-        className="fixed bottom-8 z-50 pointer-events-none"
+        className="fixed bottom-0 z-50 pointer-events-none flex items-end gap-4"
         style={{
-          animation: 'walk-across 15s linear infinite'
+          animation: 'walk-across 15s linear infinite reverse'
         }}
       >
-        <div className="relative">
-          <img
-            src="/police.png"
-            alt="Policeman"
-            className="w-32 h-32 object-contain"
-            style={{
-              filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))',
-              animation: 'bounce-slow 0.5s ease-in-out infinite, sway 1s ease-in-out infinite'
-            }}
-          />
-        </div>
+        {/* Thief running ahead */}
+        <img
+          src="/thief.png"
+          alt="Thief"
+          className="w-15 h-15 object-contain"
+          style={{
+            filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))',
+            transform: 'scaleX(-1)'
+          }}
+        />
+        {/* Policeman chasing */}
+        <img
+          src="/police.png"
+          alt="Policeman"
+          className="w-20 h-20 object-contain"
+          style={{
+            filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))',
+            transform: 'scaleX(-1)',
+            animation: 'bob-horizontal 0.3s ease-in-out infinite'
+          }}
+        />
       </div>
     </div>
   );

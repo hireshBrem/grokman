@@ -2,6 +2,7 @@ import { convertToModelMessages, streamText, UIMessage } from 'ai';
 import { z } from 'zod';
 import { xai } from '@ai-sdk/xai';
 import { analyzeVideo, searchVideos } from '@/utils/twelvelabs';
+import { generateImage } from '@/utils/grokImage';
 
 // Allow streaming responses up to 30 seconds
 
@@ -59,6 +60,24 @@ IMPORTANT: After using ANY tool (analyzeSelectedVideo or searchVideos), you MUST
             };
           } catch (error) {
             throw new Error(`Error searching videos: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          }
+        },
+      },
+      // server-side tool to generate images using Grok:
+      generateImage: {
+        description: 'Generate images using Grok AI based on a text prompt. Use this to create visualizations, diagrams, suspect sketches, scene reconstructions, or any other images needed for investigation or reporting.',
+        inputSchema: z.object({
+          prompt: z.string().describe('The description of the image to generate'),
+        }),
+        execute: async ({ prompt }: { prompt: string }) => {
+          try {
+            const imageUrl = await generateImage(prompt);
+            return {
+              imageUrl,
+              prompt
+            };
+          } catch (error) {
+            throw new Error(`Error generating image: ${error instanceof Error ? error.message : 'Unknown error'}`);
           }
         },
       },

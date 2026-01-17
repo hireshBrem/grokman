@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Bot, User, MapPin, Cloud, AlertCircle, Video, Loader2, Search } from 'lucide-react';
+import { Send, Bot, User, MapPin, Cloud, AlertCircle, Video, Loader2, Search, Image } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -56,6 +56,12 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
       label: 'Search Videos',
       icon: Search,
       prompt: 'Search for ',
+      requiresVideo: false,
+    },
+    {
+      label: 'Generate Image',
+      icon: Image,
+      prompt: 'Generate an image of ',
       requiresVideo: false,
     },
   ];
@@ -323,6 +329,77 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
                                     <div className="flex-1">
                                       <p className="text-sm font-medium text-destructive mb-1">
                                         Search Failed
+                                      </p>
+                                      <p className="text-xs text-destructive/80">
+                                        {part.errorText}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                        }
+                        break;
+                      }
+
+                      case 'tool-generateImage': {
+                        const callId = part.toolCallId;
+
+                        switch (part.state) {
+                          case 'input-streaming':
+                            return (
+                              <Badge key={callId} variant="outline" className="flex items-center gap-2">
+                                <Image className="h-3 w-3 animate-pulse" />
+                                Preparing image generation...
+                              </Badge>
+                            );
+                          case 'input-available':
+                            return (
+                              <Card key={callId} className="border-purple-500/50">
+                                <CardContent className="pt-4">
+                                  <div className="flex items-start gap-2">
+                                    <Image className="h-4 w-4 text-purple-500 mt-0.5 animate-pulse" />
+                                    <div className="flex-1">
+                                      <p className="text-sm font-medium mb-1">Generating image...</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        Prompt: "{part.input.prompt}"
+                                      </p>
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                          case 'output-available':
+                            return (
+                              <Card key={callId} className="border">
+                                <CardContent className="">
+                                  <div className="flex items-start">
+                                    {/* <Image className="h-4 w-4 text-purple-500 mt-0.5" /> */}
+                                    <div className="flex-1">
+                                      {/* <p className="text-sm font-medium mb-5">Generated Image</p> */}
+                                      {part.output?.imageUrl ? (
+                                        <img
+                                          src={part.output.imageUrl}
+                                          alt={part.output.prompt || 'Generated image'}
+                                          className="rounded-lg max-w-md w-full"
+                                        />
+                                      ) : (
+                                        <p className="text-xs text-muted-foreground">No image generated</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                          case 'output-error':
+                            return (
+                              <Card key={callId} className="border-destructive/50 bg-destructive/10">
+                                <CardContent className="pt-4">
+                                  <div className="flex items-start gap-2">
+                                    <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
+                                    <div className="flex-1">
+                                      <p className="text-sm font-medium text-destructive mb-1">
+                                        Image Generation Failed
                                       </p>
                                       <p className="text-xs text-destructive/80">
                                         {part.errorText}

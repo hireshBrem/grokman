@@ -165,3 +165,12 @@
     transform: scaleX(1);
   }
 }
+
+@keyframes bob-horizontal {
+  0%, 100% {
+    transform: scaleX(-1) translateX(-5px);
+  }
+  50% {
+    transform: scaleX(-1) translateX(5px);
+  }
+}
