@@ -29,8 +29,17 @@ npm start
 
 ## Tech Stack
 
-- Next.js 16.1.3
-- React 19
+### Frontend
+- Next.js 16.1.3 (App Router)
+- React 19 (with React Compiler)
 - TypeScript
 - Tailwind CSS v4
 - shadcn/ui
+- Lucide React (icons)
+- React Markdown
+
+### AI & APIs
+- Grok (xAI) - AI chat and image generation
+- TwelveLabs - Video analysis and search
+- Vercel AI SDK - AI streaming and integration
+- Zod - Schema validation

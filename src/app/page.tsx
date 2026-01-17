@@ -10,9 +10,12 @@ export default function Home() {
 
   return (
     <div className="flex h-screen w-screen bg-zinc-900">
+    
         {/* Left Panel - 2/3 width */}
       <div className="w-2/3 bg-zinc-900 border-r border-zinc-800">
-            {/* Empty panel for future use */}
+            <div className="p-4">
+              <h1 className="text-4xl font-bold text-white ml-5">Grokman</h1>
+            </div>
             <Videos
               selectedVideoId={selectedVideoId}
               setSelectedVideoId={setSelectedVideoId}

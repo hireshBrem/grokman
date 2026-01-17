@@ -342,7 +342,7 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
                         break;
                       }
 
-                      case 'tool-generateImage': {
+                      case 'tool-generateSuspectSketch': {
                         const callId = part.toolCallId;
 
                         switch (part.state) {
