@@ -13,9 +13,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Send, Bot, User, MapPin, Cloud, AlertCircle, Video, Loader2, Search, Image } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { getVideoUrl } from '@/utils/twelvelabs';
 
 export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string | null, indexId: string}) {
     // console.log(selectedVideoId)
@@ -43,6 +45,11 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
     }),
   });
   const [input, setInput] = useState('');
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<{videoId: string, timestamp: number} | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [loadingVideo, setLoadingVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Tool suggestions that populate the input when clicked
   const toolSuggestions = [
@@ -77,6 +84,35 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
   async function debug(){
     console.log(messages)
   }
+
+  async function handleVideoClipClick(videoId: string, startTime: number) {
+    setLoadingVideo(true);
+    setIsVideoModalOpen(true);
+    setSelectedVideo({ videoId, timestamp: startTime });
+
+    try {
+      const url = await getVideoUrl(videoId);
+      setVideoUrl(url);
+    } catch (error) {
+      console.error('Error loading video:', error);
+      setVideoUrl(null);
+    } finally {
+      setLoadingVideo(false);
+    }
+  }
+
+  // Seek to timestamp when video loads
+  useEffect(() => {
+    if (videoRef.current && videoUrl && selectedVideo) {
+      const video = videoRef.current;
+      const seekToTime = () => {
+        video.currentTime = selectedVideo.timestamp;
+      };
+
+      video.addEventListener('loadedmetadata', seekToTime);
+      return () => video.removeEventListener('loadedmetadata', seekToTime);
+    }
+  }, [videoUrl, selectedVideo]);
 
   return (
     <Card className="flex flex-col h-full border-0 shadow-none">
@@ -290,14 +326,21 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
                                                     {result.clips?.length || 0} clip(s) found
                                                   </p>
                                                   {result.clips?.slice(0, 2).map((clip: any, clipIdx: number) => (
-                                                    <div key={clipIdx} className="ml-2 mt-1 text-muted-foreground">
+                                                    <div
+                                                      key={clipIdx}
+                                                      className="ml-2 mt-1 text-muted-foreground cursor-pointer hover:text-blue-400 hover:underline transition-colors"
+                                                      onClick={() => handleVideoClipClick(clip.videoId, clip.start)}
+                                                    >
                                                       <p>• {clip.start}s - {clip.end}s (Score: {clip.rank})</p>
                                                     </div>
                                                   ))}
                                                 </>
                                               ) : (
                                                 // Individual clip
-                                                <>
+                                                <div
+                                                  className="cursor-pointer hover:bg-muted transition-colors rounded p-1 -m-1"
+                                                  onClick={() => handleVideoClipClick(result.videoId, result.start)}
+                                                >
                                                   <p>Video: {result.videoId}</p>
                                                   <p className="text-muted-foreground">
                                                     {result.start}s - {result.end}s (Score: {result.rank})
@@ -307,7 +350,7 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
                                                       "{result.transcription}"
                                                     </p>
                                                   )}
-                                                </>
+                                                </div>
                                               )}
                                             </div>
                                           ))
@@ -492,6 +535,41 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
           </Button>
         </form>
       </div>
+
+      {/* Video Modal */}
+      <Dialog open={isVideoModalOpen} onOpenChange={setIsVideoModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[70vh]">
+          <DialogHeader>
+            <DialogTitle>Video Player</DialogTitle>
+          </DialogHeader>
+          <div className="w-full">
+            {loadingVideo ? (
+              <div className="flex items-center justify-center h-48 bg-muted rounded-lg">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : videoUrl ? (
+              <video
+                ref={videoRef}
+                controls
+                className="w-full rounded-lg max-h-[50vh]"
+                src={videoUrl}
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <div className="flex items-center justify-center h-48 bg-muted rounded-lg">
+                <p className="text-muted-foreground">Failed to load video</p>
+              </div>
+            )}
+            {selectedVideo && (
+              <div className="mt-4 text-sm text-muted-foreground">
+                <p>Video ID: {selectedVideo.videoId}</p>
+                <p>Starting at: {selectedVideo.timestamp}s</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

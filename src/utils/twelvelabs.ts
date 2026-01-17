@@ -195,3 +195,21 @@ export async function searchVideos(
     return results;
 }
 
+export async function getVideoUrl(videoId: string) {
+    const client = new TwelveLabs({ apiKey: process.env.TWELVELABS_API_KEY });
+
+    try {
+        const response = await client.tasks.retrieve(videoId);
+        const videoUrl = response.hls?.videoUrl;
+
+        if (!videoUrl) {
+            throw new Error('No video URL available');
+        }
+
+        return videoUrl;
+    } catch (error) {
+        console.error('Error fetching video URL:', error);
+        throw new Error(`Failed to fetch video URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}
+
