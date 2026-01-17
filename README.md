@@ -2,6 +2,11 @@
 
 Police/detectives spend hours watching bodycam footage and CCTV videos in intense situations such as manhunts. Grokman lets you search and analyse evidence videos (bodycam and CCTV) in minutes. Grokman also lets you generates suspect sketches so that more time is spent catching than drawing.
 
+## Demo
+
+https://github.com/user-attachments/assets/be57fca6-59b5-4a5a-b1ea-a54975682da8
+
+
 ## Setup
 
 Install dependencies:
