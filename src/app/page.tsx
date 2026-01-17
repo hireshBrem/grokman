@@ -14,7 +14,7 @@ export default function Home() {
         {/* Left Panel - 2/3 width */}
       <div className="w-2/3 bg-zinc-900 border-r border-zinc-800">
             <div className="p-4">
-              <h1 className="text-4xl font-bold text-white ml-5">Grokman</h1>
+              <h1 className="text-4xl font-bold text-white ml-5">Grokman <i className='text-sm'>AI for police</i></h1>
             </div>
             <Videos
               selectedVideoId={selectedVideoId}
