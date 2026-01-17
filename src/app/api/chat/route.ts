@@ -65,7 +65,7 @@ IMPORTANT: After using ANY tool (analyzeSelectedVideo or searchVideos), you MUST
       },
       // server-side tool to generate images using Grok:
       generateImage: {
-        description: 'Generate images using Grok AI based on a text prompt. Use this to create visualizations, diagrams, suspect sketches, scene reconstructions, or any other images needed for investigation or reporting.',
+        description: 'Generate images using Grok AI based on a text prompt. Use this to create a suspect sketch, make it look like a sketch in pencil.',
         inputSchema: z.object({
           prompt: z.string().describe('The description of the image to generate'),
         }),
