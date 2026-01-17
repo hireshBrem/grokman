@@ -33,7 +33,7 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
     indexIdRef.current = indexId;
   }, [indexId]);
 
-  const { messages, sendMessage, addToolOutput, status } = useChat({
+  const { messages, sendMessage, addToolOutput, status, setMessages } = useChat({
     transport: new DefaultChatTransport({
         api: '/api/chat',
         body: () => ({
@@ -191,7 +191,7 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
                           case 'input-available':
                             return (
                               <Card key={callId} className="border-primary/50">
-                                <CardContent className="pt-4">
+                                <CardContent className="">
                                   <div className="flex items-start gap-2">
                                     <Video className="h-4 w-4 text-primary mt-0.5 animate-pulse" />
                                     <div className="flex-1">
@@ -273,10 +273,10 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
                             const videos = part.output?.videos_retrieved || [];
                             return (
                               <Card key={callId} className="border-blue-500/30">
-                                <CardContent className="pt-4">
+                                <CardContent className="">
                                   <div className="flex items-start gap-2">
-                                    <Search className="h-4 w-4 text-blue-500 mt-0.5" />
-                                    <div className="flex-1">
+                                    <Search className="h-4 w-4 text-blue-500" />
+                                    <div className="flex flex-col justify-start">
                                       <p className="text-sm font-medium mb-2">Search Results</p>
                                       <div className="text-xs space-y-2">
                                         {Array.isArray(videos) && videos.length > 0 ? (
@@ -459,6 +459,7 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
           onSubmit={e => {
             e.preventDefault();
             if (input.trim() && !isLoading) {
+              setMessages([]);
               sendMessage({ text: input });
               setInput('');
             }
@@ -471,6 +472,7 @@ export default function Chat({selectedVideoId, indexId}:{selectedVideoId: string
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 if (input.trim() && !isLoading) {
+                  setMessages([]);
                   sendMessage({ text: input });
                   setInput('');
                 }
