@@ -352,7 +352,7 @@ export default function Videos({ selectedVideoId, setSelectedVideoId, indexId, s
                       ? 'ring-2 mt-3 ring-primary shadow-lg'
                       : 'hover:shadow-md mt-3'
                   }`}
-                  onClick={() => setSelectedVideoId(video.id)}
+                  onClick={() => setSelectedVideoId(selectedVideoId === video.id ? null : video.id)}
                 >
                   <CardContent className="">
                     {/* Selection Indicator */}
